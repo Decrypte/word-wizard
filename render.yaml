@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: word-wizard
+    env: python
+    buildCommand: ""
+    startCommand: "python word_app.py"
+    autoDeploy: true

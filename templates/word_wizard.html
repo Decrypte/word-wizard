@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Word Wizard | Find Words From Letters</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        :root {
+            /* Light Theme Variables */
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --accent: #4cc9f0;
+            --background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --card-bg: #ffffff;
+            --text: #212529;
+            --text-secondary: #6c757d;
+            --border: #e0e0e0;
+            --input-bg: #ffffff;
+            --word-bg: #f1f4ff;
+            --word-border: #d0d7ff;
+            --summary-bg: linear-gradient(to right, rgba(67, 97, 238, 0.1), rgba(76, 201, 240, 0.1));
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+            --icon-gradient: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            --button-gradient: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            --success: #06d6a0;
+            --danger: #ef476f;
+            --warning: #ffd166;
+            --gray: #adb5bd;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme Variables */
+            --primary: #4cc9f0;
+            --primary-dark: #3a97b5;
+            --secondary: #7b2cbf;
+            --accent: #f72585;
+            --background: linear-gradient(135deg, #121212 0%, #2d3436 100%);
+            --card-bg: #212529;
+            --text: #f8f9fa;
+            --text-secondary: #adb5bd;
+            --border: #495057;
+            --input-bg: #343a40;
+            --word-bg: #3a506b;
+            --word-border: #1c2541;
+            --summary-bg: linear-gradient(to right, rgba(76, 201, 240, 0.1), rgba(247, 37, 133, 0.1));
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+            --icon-gradient: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            --button-gradient: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--background);
+            min-height: 100vh;
+            color: var(--text);
+            line-height: 1.6;
+            transition: background 0.3s ease;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 0 30px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 2.8rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            color: var(--secondary);
+            font-size: 1.2rem;
+            margin-top: 8px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: var(--transition);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text);
+            transition: var(--transition);
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: var(--input-bg);
+            color: var(--text);
+            transition: var(--transition);
+        }
+
+        input[type="text"]::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.2);
+        }
+
+        button {
+            background: var(--button-gradient);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .icon-circle {
+            width: 70px;
+            height: 70px;
+            background: var(--icon-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            animation: pulse 2s infinite;
+        }
+
+        .icon-circle i {
+            color: white;
+            font-size: 2rem;
+        }
+
+        .summary {
+            background: var(--summary-bg);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--primary);
+            color: var(--text);
+            transition: var(--transition);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            border: 1px solid var(--border);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+            transition: var(--transition);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .word-group {
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .word-length-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid rgba(76, 201, 240, 0.2);
+            padding-bottom: 10px;
+            transition: var(--transition);
+        }
+
+        .word-length-header h2 {
+            color: var(--secondary);
+            font-size: 1.5rem;
+            margin: 0;
+            transition: var(--transition);
+        }
+
+        .length-badge {
+            background-color: var(--secondary);
+            color: white;
+            border-radius: 20px;
+            padding: 3px 12px;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+
+        .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .word {
+            background: var(--word-bg);
+            border: 1px solid var(--word-border);
+            color: var(--text);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .word:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .theme-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .theme-switch:hover {
+            transform: rotate(15deg);
+        }
+
+        .theme-switch i {
+            color: var(--primary);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, rgba(239, 71, 111, 0.1) 0%, rgba(255, 209, 102, 0.1) 100%);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border-left: 4px solid var(--danger);
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .error-message i {
+            color: var(--danger);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .error-message p {
+            color: var(--text);
+            font-size: 1.1rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(76, 201, 240, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(76, 201, 240, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(76, 201, 240, 0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+        /* Highlight most popular word length group */
+        .word-group.popular .word-length-header {
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .word-group.popular .word-length-header h2 {
+            color: var(--accent);
+        }
+
+        /* Tooltip styling */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 120px;
+            background-color: var(--card-bg);
+            color: var(--text);
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: var(--card-shadow);
+            font-size: 0.8rem;
+            border: 1px solid var(--border);
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Progress animation for button click */
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading:after {
+            content: "";
+            position: absolute;
+            left: -100%;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="theme-switch tooltip">
+        <i class="fas fa-sun"></i>
+        <span class="tooltip-text">Toggle light/dark mode</span>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Word Wizard <i class="fas fa-magic"></i></h1>
+            <p>Transform your letters into magical words</p>
+        </div>
+
+        <div class="card">
+            <div class="icon-circle">
+                <i class="fas fa-search"></i>
+            </div>
+
+            <form method="POST" id="wordForm">
+                <div class="form-group">
+                    <label for="letters"><i class="fas fa-font"></i> Your Letters:</label>
+                    <input type="text" id="letters" name="letters" placeholder="e.g. erdgdo" required autocomplete="off"
+                        autocapitalize="none" />
+                </div>
+
+                <div class="form-group">
+                    <label for="min_length"><i class="fas fa-text-height"></i> Minimum Word Length:</label>
+                    <input type="number" id="min_length" name="min_length" value="2" min="1" max="15" />
+                </div>
+
+                <button type="submit" id="submitBtn">
+                    <i class="fas fa-wand-magic-sparkles"></i> Find Magic Words
+                </button>
+            </form>
+        </div>
+
+        {% if words_by_length %}
+        <div class="card">
+            <div class="summary">
+                <p><strong><i class="fas fa-font"></i> Letters:</strong> {{ letters }}</p>
+                <p><strong><i class="fas fa-text-height"></i> Minimum Length:</strong> {{ min_length }}</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">{{ total_words }}</div>
+                    <div class="stat-label">Total Words Found</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ elapsed_time }}s</div>
+                    <div class="stat-label">Processing Time</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ words_by_length.keys()|list|length }}</div>
+                    <div class="stat-label">Total Word Lengths</div>
+                </div>
+            </div>
+
+            {% for length, words in words_by_length.items() %}
+            <div class="word-group {% if loop.first %}popular{% endif %}">
+                <div class="word-length-header">
+                    <h2>{{ length }}-letter words</h2>
+                    <span class="length-badge">{{ words|length }}</span>
+                </div>
+                <div class="word-list">
+                    {% for word in words %}
+                    <span class="word tooltip">
+                        {{ word }}
+                        <span class="tooltip-text">Score: {{ word|length * 2 }}</span>
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <a href="/" class="back-button">
+                <i class="fas fa-arrow-left"></i> Try Different Letters
+            </a>
+        </div>
+        {% else %}
+        <div class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>No valid words found. Try with different letters!</p>
+        </div>
+        {% endif %}
+
+        <footer>
+            Word Wizard &copy; 2025 | The ultimate word finding tool
+        </footer>
+    </div>
+
+    <script>
+        // Set default theme to dark
+        document.documentElement.setAttribute('data-theme', 'dark');
+
+        // Theme toggle functionality
+        const themeSwitch = document.querySelector('.theme-switch');
+        const icon = themeSwitch.querySelector('i');
+
+        // Initialize icon based on current theme
+        if (document.documentElement.getAttribute('data-theme') === 'dark') {
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        } else {
+            icon.classList.remove('fa-sun');
+            icon.classList.add('fa-moon');
+        }
+
+        themeSwitch.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            document.documentElement.setAttribute('data-theme', newTheme);
+
+            // Update icon based on theme
+            if (newTheme === 'dark') {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+
+            // Store theme preference in localStorage
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+
+            // Update icon based on saved theme
+            if (savedTheme === 'dark') {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        }
+
+        // Add loading animation to button
+        const wordForm = document.getElementById('wordForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        if (wordForm) {
+            wordForm.addEventListener('submit', () => {
+                submitBtn.classList.add('loading');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Finding Words...';
+            });
+        }
+
+        // Add tooltip functionality for words
+        const words = document.querySelectorAll('.word');
+        words.forEach(word => {
+            const text = word.textContent.trim();
+            const score = text.length * 2; // Simple scoring based on word length
+            const tooltip = document.createElement('span');
+            tooltip.classList.add('tooltip-text');
+            tooltip.textContent = `Score: ${score}`;
+            word.appendChild(tooltip);
+        });
+    </script>
+</body>
+
+</html>
