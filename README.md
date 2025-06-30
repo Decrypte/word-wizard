@@ -1,6 +1,6 @@
 # 🔮 Word Wizard
 
-**Live Site**: [https://word-wizard-vrxz.onrender.com](https://word-wizard-vrxz.onrender.com)
+**Live Site**: [Word Wizard](https://word-wizard-vrxz.onrender.com)
 
 A clean and responsive web app that helps you discover all possible English words from a given set of letters using the official **SOWPODS dictionary**.
 
